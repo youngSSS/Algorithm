@@ -1,52 +1,56 @@
-#include <string>
 #include <vector>
-#include <queue>
-#include <unordered_map>
+#include <map>
+#include <algorithm>
+#include <iostream>
 
 using namespace std;
 
-unordered_map < string, queue<string> > path;
-unordered_map < string, priority_queue < string, vector<string>, greater<string> > > temp_path;
+map< string, vector<string> > path;
+map< string, vector<int> > is_visited;
 vector<string> answer;
 
-int dfs(string start, int ticket_cnt) {
-    string dest;
+int dfs(string start, int total_dest_cnt) {
+    int dest_cnt = path[start].size();
+    int ret_val;
 
-    if (ticket_cnt == 0) return 0;
+    answer.push_back(start);
 
-    while (!path[start].empty()) {
-        dest = path[start].front();
-        path[start].pop();
-    
-        answer.push_back(dest);
-        for (int i = 0; i < answer.size(); i++)
-            cout << answer[i] << " ";
-        cout << endl;
-        if (dfs(dest, ticket_cnt - 1) == 0)
-            return 0;
+    if (answer.size() == total_dest_cnt) return 1;
 
-        answer.erase(answer.begin() + answer.size() - 1);
-        path[start].push(dest);
-    }
-    
-    return 1;
-}
+    for (int i = 0; i < dest_cnt; i++) {
+        if (is_visited[start][i] == 0) {
+            is_visited[start][i] = 1;
+            ret_val = dfs(path[start][i], total_dest_cnt);
 
-vector<string> solution(vector<vector<string>> tickets) {
-    unordered_map < string, priority_queue < string, vector<string>, greater<string> > >::iterator iter;
+            if (ret_val == 1) return 1;
 
-    for (int i = 0; i < tickets.size(); i++) 
-        temp_path[tickets[i][0]].push(tickets[i][1]);
-
-    for (iter = temp_path.begin(); iter != temp_path.end(); iter++) {
-        while (!iter->second.empty()) {
-            path[iter->first].push(iter->second.top());
-            iter->second.pop();
+            is_visited[start][i] = 0;
+            answer.pop_back();
         }
     }
 
-    answer.push_back("ICN");
-    dfs("ICN", tickets.size());
+    return 0;
+}
+
+vector<string> solution(vector<vector<string>> tickets) {
+
+    for (auto & ticket : tickets) {
+        path[ticket[0]].push_back(ticket[1]);
+        is_visited[ticket[0]].push_back(0);
+    }
+
+    for (auto & path_item : path)
+        sort(path_item.second.begin(), path_item.second.end());
+
+    dfs("ICN", tickets.size() + 1);
 
     return answer;
+}
+
+int main() {
+    solution({{"ICN", "A"}, {"A", "B"}, {"A", "C"}, {"C", "A"}, {"B", "D"}});
+
+    for (int  i = 0; i < answer.size(); i++) {
+        cout << answer[i] << " " ;
+    }
 }
