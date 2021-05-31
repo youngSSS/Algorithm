@@ -8,10 +8,12 @@ string solution(int n, int k, vector<string> cmd) {
     vector<int> delete_item;
     string answer = "";
     int cnt = 0;
+    // insert, delete 등의 시간복잡도 줄이기 위해
     set<int> s;
     for(int i=0;i<n;i++){
         s.insert(i);
     }
+    // k의 iterator
     auto kit = s.find(k);
 
     for(int i=0;i<cmd.size();i++) {
@@ -45,6 +47,7 @@ string solution(int n, int k, vector<string> cmd) {
             kit = s.find(value);
         }
     }
+
     for(int i=0;i<n;i++)
         answer+='O';
     for(int i=0;i<delete_item.size();i++){
@@ -52,4 +55,11 @@ string solution(int n, int k, vector<string> cmd) {
     }
 
     return answer;
+}
+
+int main() {
+    cout << solution(8, 2, {"D 2", "C", "U 3", "C", "D 4", "C", "U 2", "Z", "Z"}) << endl;
+    cout << solution(8, 2, {"D 2", "C", "U 3", "C", "D 4", "C", "U 2", "Z", "Z", "U 1", "C"}) << endl;
+
+    return 0;
 }

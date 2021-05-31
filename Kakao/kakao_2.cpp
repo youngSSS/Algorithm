@@ -52,3 +52,12 @@ vector<int> solution(vector<vector<string>> places) {
     }
     return answer;
 }
+
+int main() {
+    vector<int> answer = solution({{"POOOP", "OXXOX", "OPXPX", "OOXOX", "POXXP"}, {"POOPX", "OXPXP", "PXXXO", "OXXXO", "OOOPP"}, {"PXOPX", "OXOXP", "OXPXX", "OXXXP", "POOXX"}, {"OOOXX", "XOOOX", "OOOXX", "OXOOX", "OOOOO"}, {"PXPXP", "XPXPX", "PXPXP", "XPXPX", "PXPXP"}});
+
+    for (auto ans : answer)
+        cout << ans << " ";
+
+    return 0;
+}
