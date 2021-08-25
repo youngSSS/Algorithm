@@ -28,7 +28,6 @@ void combination(int depth, int number_to_pick) {
         is_visited[depth] = 0;
         combination(depth + 1, number_to_pick);
     }
-
 }
 
 int main() {
