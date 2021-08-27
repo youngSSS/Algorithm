@@ -9,11 +9,11 @@ string solution(string play_time, string adv_time, vector<string> logs) {
     string answer = "";
     vector<int> time(360000, 0);
     queue<int> q;
-    int play = stoi(play_time.substr(0, 2)) * 60 * 60 + stoi(play_time.substr(3, 2)) * 60 + stoi(play_time.substr(6, 2));
-    int adv = stoi(adv_time.substr(0, 2)) * 60 * 60 + stoi(adv_time.substr(3, 2)) * 60 + stoi(adv_time.substr(6, 2));
+    int play = stoi(play_time.substr(0, 2)) * 3600 + stoi(play_time.substr(3, 2)) * 60 + stoi(play_time.substr(6, 2));
+    int adv = stoi(adv_time.substr(0, 2)) * 3600 + stoi(adv_time.substr(3, 2)) * 60 + stoi(adv_time.substr(6, 2));
     long long sum = 0, max;
 
-    for (auto log : logs) {
+    for (string log : logs) {
         int h1 = stoi(log.substr(0, 2));
         int m1 = stoi(log.substr(3, 2));
         int s1 = stoi(log.substr(6, 2));
@@ -21,8 +21,8 @@ string solution(string play_time, string adv_time, vector<string> logs) {
         int m2 = stoi(log.substr(12, 2));
         int s2 = stoi(log.substr(15, 2));
 
-        int log_start = h1 * 60 * 60 + m1 * 60 + s1;
-        int log_end = h2 * 60 * 60 + m2 * 60 + s2;
+        int log_start = h1 * 3600 + m1 * 60 + s1;
+        int log_end = h2 * 3600 + m2 * 60 + s2;
 
         for (int i = log_start; i < log_end; i++)
             time[i] += 1;
@@ -34,7 +34,7 @@ string solution(string play_time, string adv_time, vector<string> logs) {
     }
     max = sum;
 
-    int pos;
+    int pos = 0;
     for (int i = adv; i < play; i++) {
         sum -= time[q.front()];
         sum += time[i];
@@ -47,10 +47,9 @@ string solution(string play_time, string adv_time, vector<string> logs) {
         }
     }
 
-    int m = pos / 60;
-    int h = m / 60;
-    int s = pos % 60;
-    m = m % 60;
+    int s = pos % 60; pos /= 60;
+    int m = pos % 60; pos /= 60;
+    int h = pos;
 
     if (h < 10) answer += "0";
     answer += to_string(h);
