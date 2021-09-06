@@ -10,23 +10,20 @@ struct Trie {
     unordered_map<char, Trie*> next;
     int count = 0;
 
-    void insert(string word, int idx) {
-        int word_len = word.size();
+    void insert(const char * key) {
         count += 1;
 
-        if (idx < word_len) {
-            char w = word[idx];
-            if (next[w] == nullptr) next[w] = new Trie();
-            next[w]->insert(word, idx + 1);
+        if (*key != '\0') {
+            if (next[*key] == nullptr) next[*key] = new Trie();
+            next[*key]->insert(key + 1);
         }
     }
 
-    int find(string word, int idx) {
-        if (word.size() == idx || word[idx] == '?') return this->count;
+    int find(const char * key) {
+        if (*key == '\0' || *key == '?') return this->count;
 
-        char w = word[idx];
-        if (next[w] == nullptr) return 0;
-        return next[w]->find(word, idx + 1);
+        if (next[*key] == nullptr) return 0;
+        return next[*key]->find(key + 1);
     }
 };
 
@@ -41,9 +38,9 @@ vector<int> solution(vector<string> words, vector<string> queries) {
             trie[w_size] = new Trie();
             reverse_trie[w_size] = new Trie();
         }
-        trie[w_size]->insert(word, 0);
+        trie[w_size]->insert(word.c_str());
         reverse(word.begin(), word.end());
-        reverse_trie[w_size]->insert(word, 0);
+        reverse_trie[w_size]->insert(word.c_str());
     }
 
     for (string q : queries) {
@@ -59,7 +56,7 @@ vector<int> solution(vector<string> words, vector<string> queries) {
             reverse(q.begin(), q.end());
         }
 
-        answer.push_back(t->find(q, 0));
+        answer.push_back(t->find(q.c_str()));
     }
 
     return answer;
