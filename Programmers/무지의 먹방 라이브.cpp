@@ -6,8 +6,7 @@
 using namespace std;
 
 int solution(vector<int> food_times, long long k) {
-    int answer = 0;
-    int food_length = food_times.size();
+    long long food_length = food_times.size();
     long long clock = 0;
     set<int> s;
     unordered_map<int, int> map;
@@ -17,16 +16,19 @@ int solution(vector<int> food_times, long long k) {
         map[f] += 1;
     }
 
-    int total_loop_cnt = 0;
-    set<int>::iterator iter;
-    for (iter = s.begin(); iter != s.end(); iter++) {
-        int loop_cnt = *iter - total_loop_cnt;
-        int food_cnt = map[*iter];
+    long long total_loop_cnt = 0;
+    long long total_food_cnt = 0;
+    for (auto iter = s.begin(); iter != s.end(); iter++) {
+        long long loop_cnt = *iter - total_loop_cnt;
+        long long food_cnt = map[*iter];
 
         total_loop_cnt += loop_cnt;
+        total_food_cnt += food_cnt;
 
         clock += (loop_cnt * food_length);
         food_length -= food_cnt;
+
+        if (clock <= k && total_food_cnt == food_times.size()) return -1;
 
         if (clock >= k) {
             food_length += food_cnt;
@@ -47,9 +49,7 @@ int solution(vector<int> food_times, long long k) {
         }
     }
 
-    if (iter == s.end()) return -1;
-
-    return answer;
+    return -1;
 }
 
 int main() {
