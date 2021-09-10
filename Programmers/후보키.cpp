@@ -32,7 +32,6 @@ int solution(vector<vector<string>> relation) {
             answer.push_back(comb);
     }
 
-
     return answer.size();
 }
 
