@@ -1,74 +1,39 @@
-#include <string>
 #include <vector>
-#include <algorithm>
-#include <unordered_map>
+#include <cmath>
 #include <iostream>
+#include <set>
 
 using namespace std;
 
-vector<string> keys;
-
-void combination(vector<string> combination_target, vector<int> visit, int depth, int number_to_pick) {
-    if (number_to_pick == 0) {
-        string temp;
-        for (int i = 0; i < combination_target.size(); i++) {
-            if (visit[i] == 1) temp += combination_target[i];
-        }
-        keys.push_back(temp);
-        return;
+bool min_check(vector<int> answer, int comb) {
+    for (auto used_comb : answer) {
+        if ((used_comb & comb) == used_comb) return false;
     }
-
-    if (depth == combination_target.size()) return;
-    else {
-        visit[depth] = 1;
-        combination(combination_target, visit, depth + 1, number_to_pick - 1);
-
-        visit[depth] = 0;
-        combination(combination_target, visit, depth + 1, number_to_pick);
-    }
+    return true;
 }
 
 int solution(vector<vector<string>> relation) {
-    unordered_map<string, int> map;
-    unordered_map<int, unordered_map<int, int>> dup_check;
-    int total_key_count = 0;
+    vector<int> answer;
+    int tuple_cnt = relation.size();
+    int attr_cnt = relation[0].size();
 
-    for (vector<string> r : relation) {
-        int temp_total_key_count = 0;
+    for (int comb = 1; comb < pow(2, attr_cnt); comb++) {
+        set<string> s;
 
-        for (int i = 1; i <= r.size(); i++) {
-            vector<int> visit(r.size(), 0);
-            keys.clear();
-            combination(r, visit, 0, i);
-
-            for (int j = 0; j < keys.size(); j++) {
-                string key = keys[j];
-
-                if (total_key_count == 0) temp_total_key_count += 1;
-
-                map[key] += 1;
-
-                if (map[key] > 1 && dup_check[i][j] == 0) {
-                    dup_check[i][j] = 1;
-                    total_key_count -= 1;
-                }
+        for (int x = 0; x < tuple_cnt; x++) {
+            string value = "";
+            for (int y = 0; y < attr_cnt; y++) {
+                if (comb & (1 << y)) value += relation[x][y];
             }
-
-            for (auto a : keys) {
-                cout << a << " ";
-//                cout << "(" << dup_check[a] << ")" << " ";
-            }
-
-            cout << endl;
+            s.insert(value);
         }
 
-        if (total_key_count == 0)
-            total_key_count = temp_total_key_count;
-        cout << total_key_count << endl;
-
+        if (s.size() == tuple_cnt && min_check(answer, comb))
+            answer.push_back(comb);
     }
 
-    return total_key_count;
+
+    return answer.size();
 }
 
 int main() {
