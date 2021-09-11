@@ -45,3 +45,9 @@ vector<int> solution(vector<string> id_list, vector<string> report, int k)
 
 	return answer;
 }
+
+int main() {
+	solution({ "muzi", "frodo", "apeach", "neo" },
+		{ "muzi frodo", "apeach frodo", "frodo neo", "muzi neo", "apeach muzi" }, 2);
+	return 0;
+}

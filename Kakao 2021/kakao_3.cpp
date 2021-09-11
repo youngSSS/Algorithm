@@ -7,16 +7,13 @@
 
 using namespace std;
 
-int string_to_int(string time)
-{
+int string_to_int(string time) {
 	int h = stoi(time.substr(0, 2));
 	int m = stoi(time.substr(3));
 	return h * 60 + m;
 }
 
-
-vector<int> solution(vector<int> fees, vector<string> records)
-{
+vector<int> solution(vector<int> fees, vector<string> records) {
 	unordered_map<string, unordered_map<string, vector<int> > > map;
 	vector<pair<int, int> > result;
 	vector<int> answer;
@@ -26,8 +23,7 @@ vector<int> solution(vector<int> fees, vector<string> records)
 	int unit_time = fees[2];
 	int unit_cost = fees[3];
 
-	for (string record : records)
-	{
+	for (string record : records) {
 		auto iter1 = find(record.begin(), record.end(), ' ');
 		auto iter2 = find(iter1 + 1, record.end(), ' ');
 
@@ -38,26 +34,29 @@ vector<int> solution(vector<int> fees, vector<string> records)
 		map[car][status].push_back(string_to_int(time));
 	}
 
-	for (auto m : map)
-	{
+	for (auto m : map) {
 		string car = m.first;
 		int cost = base_cost, time = 0;
 
 		for (int i = 0; i < m.second["OUT"].size(); i++)
 			time += (m.second["OUT"][i] - m.second["IN"][i]);
+
 		if (m.second["IN"].size() > m.second["OUT"].size())
 			time += (1439 - m.second["IN"][m.second["IN"].size() - 1]);
-		if (base_time < time)
-		{
+
+		if (base_time < time) {
 			time -= base_time;
 			if (time % unit_time == 0) cost += (time / unit_time) * unit_cost;
 			else cost += (time / unit_time + 1) * unit_cost;
 		}
+
 		result.push_back(make_pair(stoi(car), cost));
 	}
+
 	sort(result.begin(), result.end());
 
 	for (auto a : result)
 		answer.push_back(a.second);
+
 	return answer;
 }
