@@ -50,8 +50,9 @@ vector<int> solution(int n, vector<int> info) {
 }
 
 int main() {
-	vector<int> a = solution(5, { 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 });
-	for (auto i : a) cout << i << " " ;
 	// Answer: 0 2 2 0 1 0 0 0 0 0 0
+	vector<int> a = solution(5, { 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 });
+
+	for (auto i : a) cout << i << " " ;
 	return 0;
 }

@@ -122,6 +122,14 @@ int solution(vector<vector<int>> board, vector<int> aloc, vector<int> bloc) {
 }
 
 int main() {
-	cout << solution({{ 1 }}, { 0, 0 }, { 0, 0 });
+	// Answer: 5
+	cout << solution(
+		{
+			{ 1, 1, 1 },
+			{ 1, 1, 1 },
+			{ 1, 1, 1 }
+		},
+		{ 1, 0 },
+		{ 1, 2 });
 	return 0;
 }

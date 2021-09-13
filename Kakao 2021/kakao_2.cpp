@@ -39,6 +39,7 @@ int solution(int n, int k) {
 }
 
 int main() {
+	// Answer: 3
 	cout << solution(437674, 3);
 	return 0;
 }

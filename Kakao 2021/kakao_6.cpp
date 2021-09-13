@@ -52,6 +52,7 @@ int solution(vector<vector<int>> board, vector<vector<int>> skill) {
 }
 
 int main() {
+	// Answer: 10
 	cout << solution(
 		{
 			{ 5, 5, 5, 5, 5 },

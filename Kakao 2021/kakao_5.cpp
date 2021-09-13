@@ -42,6 +42,7 @@ int solution(vector<int> info, vector<vector<int>> edges) {
 }
 
 int main() {
+	// Answer: 5
 	cout << solution(
 		{ 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1 },
 		{
@@ -55,6 +56,8 @@ int main() {
 			{ 4, 3 },
 			{ 6, 5 },
 			{ 4, 6 },
-			{ 8, 9 }});
+			{ 8, 9 }
+		}
+	);
 	return 0;
 }
