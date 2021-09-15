@@ -1,7 +1,0 @@
-## Files
-CMakeLists.txt
-main.cpp
-
-## Directories
-cmake-build-debug/
-.idea/
