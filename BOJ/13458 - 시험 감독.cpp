@@ -1,37 +1,32 @@
-#include <stdio.h>
+#include <vector>
+#include <cstdio>
+#include <iostream>
 
-int N, B, C;
-int A[1000001] = {0, };
-
-long long calculation();
+using namespace std;
 
 int main() {
-    scanf("%d", &N);
+	int n;
+	scanf("%d", &n);
 
-    for (int i = 1; i <= N; i++)
-        scanf("%d", &A[i]);
+	vector<int> candidates(n);
+	for (int i = 0; i < n; i++)
+		scanf("%d", &candidates[i]);
 
-    scanf("%d %d", &B, &C);
+	int a, b;
+	scanf("%d %d", &a, &b);
 
-    printf("%lld", calculation());
+	long long answer = 0;
+	for (int& count : candidates) {
+		count -= a;
+		answer += 1;
 
-    return 0;
-}
+		if (count < 0) continue;
 
-long long calculation() {
-    long long cnt = 0;
+		if (count % b == 0) answer += count / b;
+		else answer += count / b + 1;
+	}
 
-    for (int i = 1; i <= N; i++) {
-        A[i] -= B;
-        cnt++;
+	printf("%lld\n", answer);
 
-        if (A[i] > 0) {
-            if (A[i] % C != 0)
-                cnt += (A[i] / C) + 1;
-            else
-                cnt += A[i] / C;
-        }
-    }
-
-    return cnt;
+	return 0;
 }
