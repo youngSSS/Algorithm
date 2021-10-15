@@ -1,67 +1,69 @@
-#include <stdio.h>
+#include <vector>
+#include <unordered_map>
+#include <cstdio>
+#include <iostream>
 
-int N, M, max = 0;
-int paper[501][501] = {0, };
-int is_visited[501][501];
+using namespace std;
 
-void dfs(int, int, int, int);
-void* memcpy(void *dest, void *src, size_t count){
-    for(size_t i = 0; i < count; i++)
-        *((char*)dest + i) = *((char*)src + i);
-    return dest;
+int n, m;
+int answer = 0;
+int dx[4] = {0, 1, 0, -1};
+int dy[4] = {1, 0, -1, 0};
+
+vector<vector<int>> map;
+vector<vector<int>> visit;
+vector<pair<int, int>> s;
+
+void dfs(int x, int y, int sum, int cnt) {
+	if (cnt >= 4) {
+		sum += map[x][y];
+		if (sum > answer) answer = sum;
+		return;
+	}
+
+	visit[x][y] = 1;
+	for (int i = 0; i < 4; i++) {
+		int nx = x + dx[i];
+		int ny = y + dy[i];
+
+		if (0 <= nx && nx < n && 0 <= ny && ny < m && visit[nx][ny] == 0)
+			dfs(nx, ny, sum + map[x][y], cnt + 1);
+	}
+
+	if (cnt == 2) {
+		for (int i = 0; i < 4; i++) {
+			int nx1 = x + dx[i];
+			int ny1 = y + dy[i];
+			int nx2 = x + dx[(i + 1) % 4];
+			int ny2 = y + dy[(i + 1) % 4];
+
+			if ((0 <= nx1 && nx1 < n && 0 <= ny1 && ny1 < m) && (0 <= nx2 && nx2 < n && 0 <= ny2 && ny2 < m)) {
+				if (visit[nx1][ny1] == 0 && visit[nx2][ny2] == 0) {
+					int temp_sum = sum + map[x][y] + map[nx1][ny1] + map[nx2][ny2];
+					if (temp_sum > answer) answer = temp_sum;
+				}
+			}
+		}
+	}
+	visit[x][y] = 0;
 }
 
 int main() {
-    int is_visited_initializer[501][501] = {0, };
+	scanf("%d %d", &n, &m);
 
-    scanf("%d %d", &N, &M);
+	map.resize(n, vector<int>(m));
+	visit.resize(n, vector<int>(m, 0));
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++)
+			scanf("%d", &map[i][j]);
+	}
 
-    for (int i = 1; i <= N; i++) {
-        for (int j = 1; j <= M; j++)
-            scanf("%d", &paper[i][j]);
-    }
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++)
+			dfs(i, j, 0, 1);
+	}
 
-    for (int i = 1; i <= N; i++) {
-        for (int j = 1; j <= M; j++) {
-            memcpy(is_visited, is_visited_initializer, sizeof(is_visited_initializer));
-            is_visited[i][j] = 1;
-            dfs(i, j, paper[i][j], 1);
-        }
-    }
+	printf("%d", answer);
 
-    printf("%d", max);
-
-    return 0;
-}
-
-void dfs(int x, int y, int value, int cnt) {
-    if (cnt == 4) {
-        if (value > max) max = value;
-        is_visited[x][y] = 0;
-        return;
-    }
-
-    // up
-    if (x - 1 > 0 && is_visited[x - 1][y] == 0) {
-        is_visited[x - 1][y] = 1;
-        dfs(x - 1, y, value + paper[x - 1][y], cnt + 1);
-    }
-
-    // down
-    if (x + 1 <= N && is_visited[x + 1][y] == 0) {
-        is_visited[x + 1][y] = 1;
-        dfs(x + 1, y, value + paper[x + 1][y], cnt + 1);
-    }
-
-    // right
-    if (y + 1 <= M && is_visited[x][y + 1] == 0) {
-        is_visited[x][y + 1] = 1;
-        dfs(x, y + 1, value + paper[x][y + 1], cnt + 1);
-    }
-
-    // left
-    if (y - 1 > 0 && is_visited[x][y - 1] == 0) {
-        is_visited[x][y - 1] = 1;
-        dfs(x, y - 1, value + paper[x][y - 1], cnt + 1);
-    }
+	return 0;
 }
