@@ -1,31 +1,30 @@
-#include <stdio.h>
+#include <vector>
+#include <cstdio>
 
-int N, ans = 0;
-int term[1000] = {0, };
-int price[1000] = {0, };
-int dp[1000] = {0, };
+using namespace std;
 
-void DP();
-int max(int a, int b) {
-    if (a >= b) return a;
-    else return b;
+int get_max(int n, vector<int>& terms, vector<int>& ins) {
+	vector<int> dp(n + 1, 0);
+	int ans = 0;
+
+	for (int i = n - 1; i >= 0; i--) {
+		if (terms[i] + i > n) dp[i] = dp[i + 1];
+		else dp[i] = max(dp[i + 1], ins[i] + dp[i + terms[i]]);
+		ans = max(ans, dp[i]);
+	}
+
+	return ans;
 }
 
 int main() {
-    scanf("%d", &N);
-    for (int i = 1; i <= N; i++)
-        scanf("%d %d", &term[i], &price[i]);
+	int n;
+	scanf("%d", &n);
 
-    DP();
+	vector<int> terms(n), ins(n);
+	for (int i = 0; i < n; i++)
+		scanf("%d %d", &terms[i], &ins[i]);
 
-    return 0;
-}
+	printf("%d", get_max(n, terms, ins));
 
-void DP() {
-    for (int i = N; i > 0; i--) {
-        if (term[i] + i > N + 1) dp[i] = dp[i + 1];
-        else dp[i] = max(dp[i + 1], price[i] + dp[i + term[i]]);
-        ans = max(ans, dp[i]);
-    }
-    printf("%d\n", ans);
+	return 0;
 }

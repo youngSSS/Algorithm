@@ -1,133 +1,64 @@
-#include <stdio.h>
+#include <vector>
+#include <unordered_map>
+#include <cstdio>
+#include <iostream>
 
-int N, M, ans = 1;
-int map[50][50] = {0, };
-int robot_x, robot_y, robot_dir;
-int is_cleaned[50][50] = {0, };
+using namespace std;
 
-void clean();
-int rotation(int);
-int go_back(int);
-int clean_left(int);
+int n, m, ans = 0;
+unordered_map<int, pair<pair<int, int>, pair<int, int>>> dir;
+vector<vector<int>> map, visit;
+
+void do_clean(int x, int y, int d) {
+	visit[x][y] = 1;
+	ans += 1;
+
+	int cnt;
+	for (cnt = 0; cnt < 4; cnt++) {
+		d -= 1;
+		if (d == -1) d = 3;
+
+		int nx = x + dir[d].first.first;
+		int ny = y + dir[d].first.second;
+
+		if (map[nx][ny] == 0 && visit[nx][ny] == 0) {
+			do_clean(nx, ny, d);
+			break;
+		}
+	}
+
+	if (cnt == 4) {
+		int nx = x + dir[d].second.first;
+		int ny = y + dir[d].second.second;
+
+		if (map[nx][ny] == 0) {
+			ans -= 1;
+			do_clean(nx, ny, d);
+		}
+	}
+}
 
 int main() {
-    scanf("%d %d", &N, &M);
-    scanf("%d %d %d", &robot_x, &robot_y, &robot_dir);
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < M; j++)
-            scanf("%d", &map[i][j]);
-    }
+	int x, y, d;
+	scanf("%d %d", &n, &m);
+	scanf("%d %d %d", &x, &y, &d);
 
-    is_cleaned[robot_x][robot_y] = 1;
-    clean();
+	map.resize(n, vector<int>(m));
+	visit.resize(n, vector<int>(m));
 
-    printf("%d", ans);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++)
+			scanf("%d", &map[i][j]);
+	}
 
-    return 0;
-}
+	dir[0] = {{ -1, 0 }, { 1, 0 }};
+	dir[1] = {{ 0, 1 }, { 0, -1 }};
+	dir[2] = {{ 1, 0 }, { -1, 0 }};
+	dir[3] = {{ 0, -1 }, { 0, 1 }};
 
-void clean() {
-    // rotation count
-    int r_cnt = 0;
+	do_clean(x, y, d);
 
-    while(true) {
-        // direction after rotation
-        int left_dir = rotation(robot_dir);
+	printf("%d", ans);
 
-        // Case : clean up left side
-        if (clean_left(left_dir))
-            r_cnt = 0;
-
-            // Case : just rotate
-        else {
-            robot_dir = left_dir;
-            r_cnt += 1;
-
-            if (r_cnt == 4) {
-                // Case : backward
-                if (go_back(robot_dir))
-                    r_cnt = 0;
-
-                    // Case : end
-                else break;
-            }
-        }
-    }
-}
-
-int rotation(int dir) {
-    if (dir == 0) return 3;
-    else if (dir == 1) return 0;
-    else if (dir == 2) return 1;
-    else if (dir == 3) return 2;
-}
-
-int go_back(int dir) {
-    if (dir == 0) {
-        if (robot_x + 1 < N && map[robot_x + 1][robot_y] == 0) {
-            robot_x += 1;
-            return 1;
-        }
-    }
-    else if (dir == 1) {
-        if (robot_y - 1 >= 0 && map[robot_x][robot_y - 1] == 0){
-            robot_y -= 1;
-            return  1;
-        }
-    }
-    else if (dir == 2) {
-        if (robot_x - 1 >= 0 && map[robot_x - 1][robot_y] == 0){
-            robot_x -= 1;
-            return 1;
-        }
-    }
-    else if (dir == 3) {
-        if (robot_y + 1 < M && map[robot_x][robot_y + 1] == 0){
-            robot_y += 1;
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-int clean_left(int dir) {
-    if (dir == 0) {
-        if (robot_x - 1 >= 0 && map[robot_x - 1][robot_y] == 0 && is_cleaned[robot_x - 1][robot_y] == 0) {
-            robot_dir = dir;
-            robot_x = robot_x - 1;
-            is_cleaned[robot_x][robot_y] = 1;
-            ans++;
-            return 1;
-        }
-    }
-    else if (dir == 1) {
-        if (robot_y + 1 < M && map[robot_x][robot_y + 1] == 0 && is_cleaned[robot_x][robot_y + 1] == 0){
-            robot_dir = dir;
-            robot_y = robot_y + 1;
-            is_cleaned[robot_x][robot_y] = 1;
-            ans++;
-            return 1;
-        }
-    }
-    else if (dir == 2) {
-        if (robot_x + 1 < N && map[robot_x + 1][robot_y] == 0 && is_cleaned[robot_x + 1][robot_y] == 0){
-            robot_dir = dir;
-            robot_x = robot_x + 1;
-            is_cleaned[robot_x][robot_y] = 1;
-            ans++;
-            return 1;
-        }
-    }
-    else if (dir == 3) {
-        if (robot_y - 1 >= 0 && map[robot_x][robot_y - 1] == 0 && is_cleaned[robot_x][robot_y - 1] == 0){
-            robot_dir = dir;
-            robot_y = robot_y - 1;
-            is_cleaned[robot_x][robot_y] = 1;
-            ans++;
-            return 1;
-        }
-    }
-
-    return 0;
+	return 0;
 }
