@@ -1,234 +1,85 @@
-#include <stdio.h>
+#include <vector>
+#include <cstdio>
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
-#define MAX 100
+int n, k, l;
 
-int N, K, L;
-int map[102][102] = {0, };
-int row = 1, col = 1;
-int dir_time[100];
-char dir_trans[100];
+int move_snake(vector<vector<int>>& board, vector<pair<int, char>>& turns) {
+	int cnt = 0;
 
-int game_start();
-int move(char);
-char rotation(char dir, char rotate);
+	// R, D, L, U
+	int dx[4] = {0, 1, 0, -1};
+	int dy[4] = {1, 0, -1, 0};
+	int dir = 0;
 
-int front = -1;
-int rear = -1;
-int snake_row[MAX], snake_col[MAX];
+	int x = 0, y = 0;
+	queue<pair<int, int>> q;
 
-int IsEmpty() {
-    if (front == rear)
-        return true;
-    else
-        return false;
-}
-int IsFull(){
-    int tmp = (rear + 1) % MAX;
-    if (tmp == front)
-        return true;
-    else
-        return false;
-}
-void enqueue(int row, int col){
-    if (IsFull())
-        printf("Queue is Full.\n");
-    else {
-        rear = (rear + 1) % MAX;
-        snake_row[rear] = row;
-        snake_col[rear] = col;
-    }
-}
-int dequeue_row(){
-    if (IsEmpty())
-        printf("Queue is Empty.\n");
-    else {
-        //front = (front + 1) % MAX;
-        return snake_row[(front + 1) % MAX];
-    }
-}
-int dequeue_col(){
-    if (IsEmpty())
-        printf("Queue is Empty.\n");
-    else {
-        front = (front + 1) % MAX;
-        return snake_col[front];
-    }
+	board[x][y] = 2;
+	q.push(make_pair(x, y));
+
+	int turnsIdx = 0;
+
+	while (true) {
+		if (turnsIdx < turns.size() && cnt == turns[turnsIdx].first) {
+			if (turns[turnsIdx].second == 'D')
+				dir = (dir + 1) % 4;
+			else
+				dir -= 1;
+			if (dir < 0) dir = 3;
+
+			turnsIdx += 1;
+		}
+
+		x += dx[dir];
+		y += dy[dir];
+
+		// Terminate Conditions
+		if ((0 > x || x >= n) || (0 > y || y >= n)) break;
+		if (board[x][y] == 2) break;
+
+		q.push(make_pair(x, y));
+
+		// Keep Moving
+		if (board[x][y] == 0) {
+			int tail_x = q.front().first;
+			int tail_y = q.front().second;
+			q.pop();
+
+			board[tail_x][tail_y] = 0;
+		}
+
+		board[x][y] = 2;
+
+		cnt += 1;
+	}
+
+	return cnt + 1;
 }
 
 int main() {
-    scanf("%d %d", &N, &K);
+	scanf("%d %d", &n, &k);
 
-    for (int i = 0; i <= N + 1; i++) {
-        map[i][0] = 1;
-        map[i][N + 1] = 1;
-        map[0][i] = 1;
-        map[N + 1][i] = 1;
-        map[1][1] = 1;
-    }
+	vector<vector<int>> board(n, vector<int>(n, 0));
+	for (int i = 0; i < k; i++) {
+		int x, y;
+		scanf("%d %d", &x, &y);
+		board[x - 1][y - 1] = 1;
+	}
 
-    for (int i = 0; i < K; i++) {
-        int tmp_row, tmp_col;
-        scanf("%d %d", &tmp_row, &tmp_col);
-        map[tmp_row][tmp_col] = 2;
-    }
+	scanf("%d", &l);
+	vector<pair<int, char>> turns(l);
+	for (int i = 0; i < l; i++) {
+		int t;
+		char c;
+		scanf("%d %c", &t, &c);
+		turns[i] = make_pair(t, c);
+	}
 
-    scanf("%d", &L);
+	printf("%d\n", move_snake(board, turns));
 
-    for (int i = 0; i < L; i++)
-        scanf("%d %c", &dir_time[i], &dir_trans[i]);
-
-    printf("%d", game_start());
-
-    return 0;
-}
-
-int game_start() {
-    int timer = 0, cnt = 0;
-    char dir = 'R', rotate;
-
-    enqueue(row, col);
-
-    while (true) {
-        timer++;
-        if (move(dir) == 1)
-            break;
-        if (dir_time[cnt] == timer) {
-            rotate = dir_trans[cnt];
-            dir = rotation(dir, rotate);
-
-            cnt++;
-        }
-    }
-
-    return timer;
-}
-
-char rotation(char dir, char rotate) {
-    if (dir == 'R') {
-        if (rotate == 'L')
-            dir = 'U';
-        else
-            dir = 'D';
-    }
-
-    else if (dir == 'L') {
-        if (rotate == 'L')
-            dir = 'D';
-        else
-            dir = 'U';
-    }
-
-    else if (dir == 'U') {
-        if (rotate == 'L')
-            dir = 'L';
-        else
-            dir = 'R';
-    }
-
-    else if (dir == 'D') {
-        if (rotate == 'L')
-            dir = 'R';
-        else
-            dir = 'L';
-    }
-
-    return dir;
-}
-
-int move(char dir) {
-    if (dir == 'R') {
-        col += 1;
-
-        if (map[row][col] == 0) {
-            int tail_row = dequeue_row();
-            int tail_col = dequeue_col();
-
-            map[tail_row][tail_col] = 0;
-
-            enqueue(row, col);
-            map[row][col] = 1;
-            return 0;
-        }
-
-        else if (map[row][col] == 2) {
-            enqueue(row, col);
-            map[row][col] = 1;
-            return 2;
-        }
-
-        else if (map[row][col] == 1)
-            return 1;
-    }
-
-    else if (dir == 'L') {
-        col -= 1;
-
-        if (map[row][col] == 0) {
-            int tail_row = dequeue_row();
-            int tail_col = dequeue_col();
-            map[tail_row][tail_col] = 0;
-
-            enqueue(row, col);
-            map[row][col] = 1;
-            return 0;
-        }
-
-        else if (map[row][col] == 2) {
-            enqueue(row, col);
-            map[row][col] = 1;
-            return 2;
-        }
-
-        else if (map[row][col] == 1)
-            return 1;
-    }
-
-    else if (dir == 'U') {
-        row -= 1;
-
-        if (map[row][col] == 0) {
-            int tail_row = dequeue_row();
-            int tail_col = dequeue_col();
-            map[tail_row][tail_col] = 0;
-
-            enqueue(row, col);
-            map[row][col] = 1;
-            return 0;
-        }
-
-        else if (map[row][col] == 2) {
-            enqueue(row, col);
-            map[row][col] = 1;
-            return 2;
-        }
-
-        else if (map[row][col] == 1)
-            return 1;
-    }
-
-    else if (dir == 'D') {
-        row += 1;
-
-        if (map[row][col] == 0) {
-            int tail_row = dequeue_row();
-            int tail_col = dequeue_col();
-            map[tail_row][tail_col] = 0;
-
-            enqueue(row, col);
-            map[row][col] = 1;
-            return 0;
-        }
-
-        else if (map[row][col] == 2) {
-            enqueue(row, col);
-            map[row][col] = 1;
-            return 2;
-        }
-
-        else if (map[row][col] == 1)
-            return 1;
-    }
+	return 0;
 }
