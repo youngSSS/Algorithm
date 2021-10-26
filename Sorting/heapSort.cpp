@@ -47,11 +47,26 @@ class Solution {
 		}
 	}
 
+	void buildHeap(vector<int>& nums) {
+		heapCnt = heap.size();
+
+		for (int i = 0; i < nums.size(); i++)
+			heap[i + 1] = nums[i];
+
+		for (int i = heapCnt / 2; i > 0; i--)
+			heapfify(i);
+	}
+
 	vector<int> heapSort(vector<int>& nums) {
 		heap.resize(nums.size() + 1);
 		heapCnt = 0;
 
-		for (int num : nums) heapInsert(num);
+		// Solution 1
+//		for (int num : nums) heapInsert(num);
+//		for (int& num : nums) num = heapDelete();
+
+		// Solution 2
+		buildHeap(nums);
 		for (int& num : nums) num = heapDelete();
 
 		return nums;
