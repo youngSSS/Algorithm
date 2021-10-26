@@ -48,7 +48,7 @@ class Solution {
 	}
 
 	void buildHeap(vector<int>& nums) {
-		heapCnt = heap.size();
+		heapCnt = heap.size() - 1;
 
 		for (int i = 0; i < nums.size(); i++)
 			heap[i + 1] = nums[i];
@@ -58,7 +58,7 @@ class Solution {
 	}
 
 	vector<int> heapSort(vector<int>& nums) {
-		heap.resize(nums.size() + 1);
+		heap.resize(nums.size() + 1, -200);
 		heapCnt = 0;
 
 		// Solution 1
